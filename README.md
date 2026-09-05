@@ -1,4 +1,4 @@
-# AI Teacher
+# AI Teacher !!
 
 AI Teacher is an adaptive educator that teaches from a topic or uploaded study material. It follows **Understand → Plan → Explain → Demonstrate → Question → Evaluate → Adapt → Continue**, rather than behaving as a one-shot chatbot.
 
