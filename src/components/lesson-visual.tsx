@@ -1,0 +1,8 @@
+type Props = { type: string; content: string; title?: string };
+
+const labels: Record<string, string> = { blackboard: "Teacher's blackboard", diagram: "Concept map", steps: "Step-by-step", example: "Worked example", table: "Quick reference", equation: "Key equation" };
+
+export function LessonVisual({ type, content, title }: Props) {
+  const lines = content.split("\n").map((line) => line.trim()).filter(Boolean);
+  return <section className="overflow-hidden rounded-2xl border border-slate-700 bg-slate-950 shadow-xl shadow-slate-950/20"><div className="flex items-center justify-between border-b border-slate-700 bg-slate-900 px-5 py-4"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-300">{labels[type] || "Lesson visual"}</p><h3 className="mt-1 font-semibold text-white">{title || "Visual explanation"}</h3></div><span className="grid h-9 w-9 place-items-center rounded-full bg-cyan-400/10 text-lg" aria-hidden="true">✦</span></div><div className="relative p-5 sm:p-6"><div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "28px 28px" }} /><div className="relative space-y-3">{lines.map((line, index) => <div key={`${line}-${index}`} className={index === 0 ? "font-mono text-lg font-bold leading-8 text-cyan-200" : "rounded-lg border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm leading-6 text-slate-100"}>{line.includes("→") ? <span className="text-cyan-100">{line}</span> : line}</div>)}</div></div><div className="border-t border-slate-700 px-5 py-3 text-xs text-slate-400">Visual aid for this lesson step</div></section>;
+}

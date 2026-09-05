@@ -1,0 +1,6 @@
+import type { SourceCitation } from "@/teaching";
+
+export function SourceGrounding({ citations }: { citations: SourceCitation[] }) {
+  if (citations.length === 0) return null;
+  return <section className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-sm dark:border-emerald-900 dark:from-emerald-950/50 dark:to-zinc-900"><div className="flex items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-600 text-lg text-white shadow-sm" aria-hidden="true">✓</span><div><p className="font-semibold text-emerald-950 dark:text-emerald-50">Source-backed explanation</p><p className="mt-1 text-sm leading-6 text-emerald-800 dark:text-emerald-200">Verified against the learning material you shared.</p></div></div><div className="mt-5 grid gap-3 lg:grid-cols-3">{citations.slice(0, 3).map((citation, index) => <article key={citation.chunkId} className="rounded-xl border border-emerald-100 bg-white p-4 dark:border-emerald-900 dark:bg-zinc-950/60"><p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-700 dark:text-emerald-300">Evidence {index + 1}</p><p className="mt-2 text-sm leading-6 text-zinc-700 dark:text-zinc-200">“{citation.excerpt}”</p></article>)}</div></section>;
+}

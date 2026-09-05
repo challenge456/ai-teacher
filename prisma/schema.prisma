@@ -1,0 +1,127 @@
+// Prisma schema – PostgreSQL‑compatible
+// NOTE: In Prisma ORM v7 the connection `url` is no longer set here.
+// It lives in `prisma.config.ts` (for the CLI / migrations) and is passed
+// to the driver adapter in `src/db/client.ts` (for the runtime client).
+generator client {
+  provider = "prisma-client-js"
+  // previewFeatures = ["vector"]   // add vector later for RAG
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Lesson {
+  id               String          @id @default(cuid())
+  topic            String
+  objective        String
+  estimatedMinutes Float
+  concepts         Json
+  learner          Json
+  sourceDocumentId String?
+  studentId        String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  sections         LessonSection[]
+  session          LessonSession?
+  sourceDocument   LearningDocument? @relation(fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  student          StudentProfile?  @relation(fields: [studentId], references: [id], onDelete: SetNull)
+}
+
+model StudentProfile {
+  id             String            @id
+  learnerProfile Json
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  lessons        Lesson[]
+  conceptProgress ConceptProgress[]
+}
+
+model ConceptProgress {
+  id              String         @id @default(cuid())
+  studentId       String
+  topic           String
+  concept         String
+  mastery         Float          @default(0)
+  attempts        Int            @default(0)
+  correctAttempts Int            @default(0)
+  lastStudiedAt   DateTime       @default(now())
+  student         StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, topic, concept])
+}
+
+model LessonSection {
+  id              String          @id @default(cuid())
+  lessonId        String
+  sourceId        String
+  order           Int
+  concept         String
+  explanation     String
+  spokenScript    String
+  visualType      String
+  visualContent   String
+  question        Json?
+  expectedConcept String
+  successCriteria Json
+  durationHintSec Int
+  language        String
+  sourceCitations Json            @default("[]")
+  lesson          Lesson          @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  answers         StudentAnswer[]
+
+  @@unique([lessonId, sourceId])
+  @@unique([lessonId, order])
+}
+
+model LearningDocument {
+  id        String          @id @default(cuid())
+  name      String
+  mimeType  String
+  sizeBytes Int
+  text      String
+  createdAt DateTime        @default(now())
+  chunks    DocumentChunk[]
+  lessons   Lesson[]
+}
+
+model DocumentChunk {
+  id           String            @id @default(cuid())
+  documentId   String
+  order        Int
+  content      String
+  characterStart Int
+  characterEnd   Int
+  createdAt    DateTime          @default(now())
+  document     LearningDocument  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, order])
+}
+
+model LessonSession {
+  id                  String          @id @default(cuid())
+  lessonId            String          @unique
+  currentSection      Int             @default(0)
+  currentAttempt      Int             @default(1)
+  state               String          @default("lesson-overview")
+  completedAt         DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  lesson              Lesson          @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  answers             StudentAnswer[]
+}
+
+model StudentAnswer {
+  id              String        @id @default(cuid())
+  sessionId       String
+  sectionId       String
+  answer          String
+  attemptNumber   Int
+  evaluation      Json
+  adaptation      Json?
+  nextAction      String
+  message         String
+  createdAt       DateTime      @default(now())
+  session         LessonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  section         LessonSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+}

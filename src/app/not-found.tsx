@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function NotFound(){return <main className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center px-5 py-20"><p className="font-semibold text-blue-700">404</p><h1 className="mt-2 text-4xl font-bold">This page is not here.</h1><p className="mt-4 text-zinc-600 dark:text-zinc-300">The link may be old or the page may have moved.</p><Link href="/" className="mt-8 font-semibold text-blue-700 hover:underline">Back to AI Teacher →</Link></main>}
